@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#08111f" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="description" content="A four-video grid viewer" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Video Viewer" />
+  <title>Fishing & Coastal Cameras</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08111f;
+      --panel: #101c2e;
+      --border: rgba(255,255,255,.14);
+      --text: #f4f7fb;
+      --muted: #9fb0c7;
+      --accent: #65b5ff;
+      --shadow: 0 18px 45px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(31,91,150,.22), transparent 34rem), var(--bg);
+    }
+
+    .page-shell {
+      width: min(1500px, 100%);
+      margin: 0 auto;
+      padding: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.7rem);
+      line-height: 1;
+      letter-spacing: -.04em;
+    }
+
+    .camera-header { display:flex; align-items:flex-start; gap:14px; margin-bottom:12px; }
+    .camera-header > a { color:var(--accent); text-decoration:none; font-weight:800; white-space:nowrap; padding-top:5px; }
+    .camera-header h1 { margin:0; }
+
+    .subtitle {
+      margin: 9px 0 22px;
+      color: var(--muted);
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .video-card {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .video-frame {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+
+    iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .video-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1px;
+      padding: 5px 8px;
+    }
+
+    .video-label {
+      margin: 0;
+      font-weight: 800;
+    }
+
+    .open-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: .88rem;
+      font-weight: 750;
+    }
+
+    .open-link:hover { text-decoration: underline; }
+
+    .local-warning {
+      display: none;
+      margin: 0 0 18px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255,190,90,.4);
+      border-radius: 12px;
+      background: rgba(255,190,90,.09);
+      color: #ffe0a6;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 760px) {
+      .page-shell { padding: 8px; }
+      .video-grid { grid-template-columns: 3fr; gap: 14px; }
+      .video-card { border-radius: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="camera-header"><a href="/" target="_top"></a><div><h1></h1><p class="subtitle"></p></div></header>
+
+    <div class="local-warning" id="localWarning">
+      YouTube may block embedded videos when this file is opened directly. Close this page and run <strong>start.bat</strong> instead.
+    </div>
+
+    <section class="video-grid" aria-label="Video collection">
+      
+      
+         <article class="video-card">
+        <div class="video-frame">
+          <iframe src="https://www.youtube-nocookie.com/embed/3Rp_9FUKH4I?autoplay=1&mute=1&rel=0&controls=0" title="Video 3" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+       
+      </article>
+      
+       <article class="video-card">
+        <div class="video-frame">
+          <iframe src="https://www.youtube-nocookie.com/embed/N5wWOVOTHmQ?autoplay=1&mute=1&rel=0&controls=0" title="Video 4" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        
+        </article>
+        
+        <article class="video-card">
+        <div class="video-frame">
+          <iframe src="https://www.youtube-nocookie.com/embed/5Ijk8QsR-nw?autoplay=1&mute=1&rel=0&controls=0" title="Video 1" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        
+      </article>
+
+      <article class="video-card">
+        <div class="video-frame">
+          <iframe src="https://www.youtube-nocookie.com/embed/pJqrjIuvGFE?autoplay=1&mute=1&rel=0&controls=0" title="Video 2" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        
+      </article>
+
+      <article class="video-card">
+        <div class="video-frame">
+          <iframe src="https://www.youtube-nocookie.com/embed/l2em7gqBj00?autoplay=1&mute=1&rel=0&controls=0" title="Video 3" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+       
+      </article>
+      
+      
+             <article class="video-card">
+        <div class="video-frame">
+          <iframe src="https://www.youtube-nocookie.com/embed/Kckw310hYgA?autoplay=1&mute=1&rel=0&controls=0" title="Video 3" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+       
+      </article>
+      
+      
+          <article class="video-card">
+        <div class="video-frame">
+          <iframe src="https://www.youtube-nocookie.com/embed/GvbhY-EaPJg?autoplay=1&mute=1&rel=0&controls=0" title="Video 3" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+       
+      </article>
+      
+      
+                   <article class="video-card">
+        <div class="video-frame">
+          <iframe src="https://www.youtube-nocookie.com/embed/rjASdnpfONo?autoplay=1&mute=1&rel=0&controls=0" title="Video 3" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+       
+      </article>
+
+
+     
+      
+        <article class="video-card">
+        <div class="video-frame">
+          <iframe src="https://www.youtube-nocookie.com/embed/QkBL9SJI8iM?autoplay=1&mute=1&rel=0&controls=0" title="Video 5" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+       
+      </article>
+      
+      
+    
+      
+      
+      
+    </section>
+  </main>
+
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111c">
+  <title>Fishing Reports & NOAA Radio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; --bg:#07111c; --card:#0d1c2b; --card2:#102438; --border:#203b52; --text:#eef7ff; --muted:#94aabd; --accent:#32d6c5; --warn:#ffbd4a; --danger:#ff6a6a; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:radial-gradient(circle at top,#12314b 0,#07111c 45%); color:var(--text); font-family:Inter,sans-serif; }
+    .shell { width:min(1000px,100%); margin:auto; padding:18px; }
+    header { display:flex; justify-content:space-between; align-items:flex-end; gap:14px; margin-bottom:16px; }
+    .kicker { color:var(--accent); font:700 .72rem/1 JetBrains Mono,monospace; letter-spacing:.15em; }
+    h1,h2 { margin:4px 0 0; font-family:Rajdhani,sans-serif; }
+    h1 { font-size:clamp(1.7rem,5vw,2.6rem); }
+    .live { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:.8rem; }
+    .dot { width:9px; height:9px; border-radius:50%; background:#ff4f4f; box-shadow:0 0 12px #ff4f4f; }
+    .card { background:linear-gradient(145deg,var(--card2),var(--card)); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:14px; box-shadow:0 16px 40px rgba(0,0,0,.22); }
+    .radio-card { border-color:#2b6c6a; }
+    .radio-row { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:14px; }
+    .radio-icon { width:58px; height:58px; display:grid; place-items:center; border-radius:14px; background:#0b3e42; font-size:1.8rem; }
+    .station { color:var(--accent); font:700 .72rem JetBrains Mono,monospace; letter-spacing:.08em; }
+    .radio-title { font:700 1.35rem Rajdhani,sans-serif; }
+    .radio-sub { margin-top:2px; color:var(--muted); font-size:.86rem; }
+    audio { width:100%; margin-top:14px; accent-color:var(--accent); }
+    .section-title { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .section-title h2 { font-size:1.3rem; }
+    .status { color:var(--muted); font-size:.78rem; }
+    .episode,.alert { padding:13px 0; border-top:1px solid var(--border); }
+    .episode:first-child,.alert:first-child { border-top:0; padding-top:0; }
+    .episode-title,.alert-title { color:var(--text); font-weight:700; text-decoration:none; }
+    .episode-title:hover,.alert-title:hover { color:var(--accent); }
+    .meta { margin-top:5px; color:var(--muted); font-size:.78rem; }
+    .episode audio { margin-top:10px; }
+    .alert-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .badge { flex:none; padding:4px 7px; border-radius:999px; background:rgba(255,189,74,.14); color:var(--warn); font:700 .66rem JetBrains Mono,monospace; text-transform:uppercase; }
+    .alert p { margin:8px 0 0; color:#c7d5e1; line-height:1.45; font-size:.88rem; white-space:pre-line; }
+    .empty,.error { color:var(--muted); padding:10px 0; }
+    .error { color:#ff9a9a; }
+    @media(max-width:560px){ .shell{padding:10px} header{align-items:flex-start;flex-direction:column}.radio-row{grid-template-columns:48px 1fr}.radio-icon{width:48px;height:48px}.card{padding:13px;border-radius:12px} }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div><div class="kicker">LOWER ALABAMA OUTDOORS</div><h1>Fishing Reports &amp; NOAA Radio</h1></div>
+      <div class="live"><span class="dot"></span> Live stream</div>
+    </header>
+
+    <section class="card radio-card">
+      <div class="radio-row">
+        <div class="radio-icon">📻</div>
+        <div><div class="station">KEC61 · 162.550 MHz</div><div class="radio-title">NOAA Weather Radio — Mobile</div><div class="radio-sub">Continuous weather information for coastal Alabama</div></div>
+      </div>
+      <audio controls preload="none" src="https://radio.weatherusa.net/NWR/KEC61_2.mp3">Your browser does not support audio playback.</audio>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><h2>Latest Fishing Reports</h2><span class="status" id="report-status">Loading…</span></div>
+      <div id="reports"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><h2>Active Weather Alerts</h2><span class="status" id="alert-status">Loading…</span></div>
+      <div id="alerts"></div>
+    </section>
+  </main>
+<script>
+const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+async function loadReports(){
+  const box=document.getElementById('reports'), status=document.getElementById('report-status');
+  try { const res=await fetch('/api/fishing-reports'); const data=await res.json(); if(!res.ok) throw new Error(data.error);
+    status.textContent=data.reports.length ? `${data.reports.length} episodes` : 'None found';
+    box.innerHTML=data.reports.length ? data.reports.map(r=>`<article class="episode"><a class="episode-title" href="${escapeHtml(r.link)}" target="_blank" rel="noopener">${escapeHtml(r.title)}</a><div class="meta">${escapeHtml(r.published)}</div>${r.audio?`<audio controls preload="none" src="${escapeHtml(r.audio)}"></audio>`:''}</article>`).join('') : '<div class="empty">No fishing reports are available.</div>';
+  } catch(e){ status.textContent='Unavailable'; box.innerHTML='<div class="error">Fishing reports could not be loaded.</div>'; }
+}
+async function loadAlerts(){
+  const box=document.getElementById('alerts'), status=document.getElementById('alert-status');
+  try { const res=await fetch('/api/radio-alerts'); const data=await res.json(); if(!res.ok) throw new Error(data.error);
+    status.textContent=data.alerts.length ? `${data.alerts.length} active` : 'All clear';
+    box.innerHTML=data.alerts.length ? data.alerts.map(a=>`<article class="alert"><div class="alert-head"><a class="alert-title" href="${escapeHtml(a.url)}" target="_blank" rel="noopener">${escapeHtml(a.event)}</a><span class="badge">${escapeHtml(a.severity)}</span></div><div class="meta">${escapeHtml(a.headline)}</div><p>${escapeHtml((a.description||'').slice(0,700))}</p></article>`).join('') : '<div class="empty">No active weather alerts for the Fairhope area.</div>';
+  } catch(e){ status.textContent='Unavailable'; box.innerHTML='<div class="error">Weather alerts could not be loaded.</div>'; }
+}
+loadReports(); loadAlerts(); setInterval(loadAlerts, 300000);
+</script>
+</body>
+</html>

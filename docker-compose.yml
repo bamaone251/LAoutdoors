@@ -1,0 +1,7 @@
+services:
+  lower-alabama-outdoors:
+    build: .
+    container_name: lower-alabama-outdoors
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
